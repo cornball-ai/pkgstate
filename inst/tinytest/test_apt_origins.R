@@ -29,7 +29,6 @@ cols <- c("package", "version", "priority", "origin", "site", "suite",
 
 old <- rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
     fx("apt-cache-policy-pkgs.txt")))
-on.exit(rdpkg:::set_runner(old), add = TRUE)
 df <- apt_origins(c("dpkg", "bash", "linux-image-6.14.0-1014-oem"))
 rdpkg:::set_runner(old)
 

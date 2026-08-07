@@ -2,4 +2,5 @@
 
 export(apt_candidates)
 export(apt_origins)
+export(apt_upgradable)
 export(dpkg_installed)
