@@ -11,7 +11,8 @@
 #' @return A data.frame with columns \code{package}, \code{version},
 #'   \code{priority}, \code{origin}, \code{site}, \code{suite},
 #'   \code{component}, and \code{installed}. The dpkg status pseudo-source
-#'   appears with \code{origin ""}, \code{site ""}, \code{suite "now"}.
+#'   appears with \code{origin ""}, \code{site ""}, \code{suite "now"},
+#'   \code{component ""}.
 #'   \code{installed} marks the currently installed version. Unknown
 #'   package names yield zero rows and are not an error.
 #' @examples
