@@ -16,7 +16,6 @@ cols <- c("package", "version", "architecture", "status")
 # --- Recorded real output parses to the contracted shape ---
 
 old <- rdpkg:::set_runner(fake(fx("dpkg-query-W.txt")))
-on.exit(rdpkg:::set_runner(old), add = TRUE)
 df <- dpkg_installed()
 rdpkg:::set_runner(old)
 
