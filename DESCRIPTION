@@ -1,0 +1,19 @@
+Package: rdpkg
+Type: Package
+Title: Read-Only Introspection of 'dpkg' and 'APT' State
+Version: 0.0.1
+Date: 2026-08-07
+Authors@R: c(
+    person("Troy", "Hernandez", role = c("aut", "cre"), email = "troy@cornball.ai",
+           comment = c(ORCID = "0009-0005-4248-604X")),
+    person("cornball.ai", role = "cph"))
+Description: Structured, read-only queries of installed-package state ('dpkg')
+    and archive metadata ('APT'): installed packages, candidate versions,
+    origins, and upgradeability, returned as plain data frames. Part of the
+    Runix system-administration framework; mutations are out of scope and
+    live in the 'rapt' package.
+License: MIT + file LICENSE
+OS_type: unix
+Suggests: tinytest
+Encoding: UTF-8
+Config/roxygen2/version: 8.0.0
