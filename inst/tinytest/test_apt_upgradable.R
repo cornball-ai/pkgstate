@@ -71,6 +71,30 @@ expect_true(sec$security)
 expect_equal(sec$suite, "noble-security")
 expect_true(is.na(sec$phased_percent))
 
+# --- security reflects the CANDIDATE version's sources only: an installed
+# --- version from a security pocket must not taint the flag ---
+
+mixed_policy <- c(
+    "mixedpkg:",
+    "  Installed: 1.0",
+    "  Candidate: 2.0",
+    "  Version table:",
+    "     2.0 500",
+    paste0("        500 http://archive.ubuntu.com/ubuntu ",
+        "noble-updates/main amd64 Packages"),
+    " *** 1.0 500",
+    paste0("        500 http://security.ubuntu.com/ubuntu ",
+        "noble-security/main amd64 Packages"),
+    "        100 /var/lib/dpkg/status"
+)
+rdpkg:::set_runner(fake_multi("mixedpkg\t1.0\tamd64\tinstalled", "amd64",
+    fx("apt-cache-policy-global.txt"), mixed_policy))
+mixed <- apt_upgradable()
+rdpkg:::set_runner(old)
+expect_equal(mixed$package, "mixedpkg")
+expect_false(mixed$security)
+expect_equal(mixed$suite, "noble-updates")
+
 # --- Nothing upgradable means zero rows with contracted columns ---
 
 rdpkg:::set_runner(fake_multi("dpkg\t1.22.6ubuntu6.6\tamd64\tinstalled",
