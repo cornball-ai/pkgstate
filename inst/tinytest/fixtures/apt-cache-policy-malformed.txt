@@ -1,0 +1,4 @@
+dpkg:
+  Installed: 1.0
+  Version table:
+ it is broken here

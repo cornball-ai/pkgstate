@@ -1,0 +1,117 @@
+Package files:
+ 100 /var/lib/dpkg/status
+     release a=now
+ 500 http://security.ubuntu.com/ubuntu noble-security/multiverse i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-security,n=noble,l=Ubuntu,c=multiverse,b=i386
+     origin security.ubuntu.com
+ 500 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-security,n=noble,l=Ubuntu,c=multiverse,b=amd64
+     origin security.ubuntu.com
+ 500 http://security.ubuntu.com/ubuntu noble-security/universe i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-security,n=noble,l=Ubuntu,c=universe,b=i386
+     origin security.ubuntu.com
+ 500 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-security,n=noble,l=Ubuntu,c=universe,b=amd64
+     origin security.ubuntu.com
+ 500 http://security.ubuntu.com/ubuntu noble-security/restricted i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-security,n=noble,l=Ubuntu,c=restricted,b=i386
+     origin security.ubuntu.com
+ 500 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-security,n=noble,l=Ubuntu,c=restricted,b=amd64
+     origin security.ubuntu.com
+ 500 http://security.ubuntu.com/ubuntu noble-security/main i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-security,n=noble,l=Ubuntu,c=main,b=i386
+     origin security.ubuntu.com
+ 500 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-security,n=noble,l=Ubuntu,c=main,b=amd64
+     origin security.ubuntu.com
+ 100 http://archive.ubuntu.com/ubuntu noble-backports/multiverse i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-backports,n=noble,l=Ubuntu,c=multiverse,b=i386
+     origin archive.ubuntu.com
+ 100 http://archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-backports,n=noble,l=Ubuntu,c=multiverse,b=amd64
+     origin archive.ubuntu.com
+ 100 http://archive.ubuntu.com/ubuntu noble-backports/universe i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-backports,n=noble,l=Ubuntu,c=universe,b=i386
+     origin archive.ubuntu.com
+ 100 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-backports,n=noble,l=Ubuntu,c=universe,b=amd64
+     origin archive.ubuntu.com
+ 100 http://archive.ubuntu.com/ubuntu noble-backports/main i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-backports,n=noble,l=Ubuntu,c=main,b=i386
+     origin archive.ubuntu.com
+ 100 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-backports,n=noble,l=Ubuntu,c=main,b=amd64
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble-updates/multiverse i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-updates,n=noble,l=Ubuntu,c=multiverse,b=i386
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-updates,n=noble,l=Ubuntu,c=multiverse,b=amd64
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble-updates/universe i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-updates,n=noble,l=Ubuntu,c=universe,b=i386
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-updates,n=noble,l=Ubuntu,c=universe,b=amd64
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble-updates/restricted i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-updates,n=noble,l=Ubuntu,c=restricted,b=i386
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-updates,n=noble,l=Ubuntu,c=restricted,b=amd64
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble-updates/main i386 Packages
+     release v=24.04,o=Ubuntu,a=noble-updates,n=noble,l=Ubuntu,c=main,b=i386
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble-updates,n=noble,l=Ubuntu,c=main,b=amd64
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble/multiverse i386 Packages
+     release v=24.04,o=Ubuntu,a=noble,n=noble,l=Ubuntu,c=multiverse,b=i386
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble,n=noble,l=Ubuntu,c=multiverse,b=amd64
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble/universe i386 Packages
+     release v=24.04,o=Ubuntu,a=noble,n=noble,l=Ubuntu,c=universe,b=i386
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble,n=noble,l=Ubuntu,c=universe,b=amd64
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble/restricted i386 Packages
+     release v=24.04,o=Ubuntu,a=noble,n=noble,l=Ubuntu,c=restricted,b=i386
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble,n=noble,l=Ubuntu,c=restricted,b=amd64
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble/main i386 Packages
+     release v=24.04,o=Ubuntu,a=noble,n=noble,l=Ubuntu,c=main,b=i386
+     origin archive.ubuntu.com
+ 500 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages
+     release v=24.04,o=Ubuntu,a=noble,n=noble,l=Ubuntu,c=main,b=amd64
+     origin archive.ubuntu.com
+ 500 https://repository.spotify.com stable/non-free i386 Packages
+     release v=0.4,o=Spotify LTD,a=stable,n=stable,l=Spotify Public Repository,c=non-free,b=i386
+     origin repository.spotify.com
+ 500 https://repository.spotify.com stable/non-free amd64 Packages
+     release v=0.4,o=Spotify LTD,a=stable,n=stable,l=Spotify Public Repository,c=non-free,b=amd64
+     origin repository.spotify.com
+ 500 https://updates.signal.org/desktop/apt xenial/main amd64 Packages
+     release o=. xenial,a=xenial,n=xenial,l=. xenial,c=main,b=amd64
+     origin updates.signal.org
+ 500 https://r2u.stat.illinois.edu/ubuntu noble/main all Packages
+     release o=CRAN-Apt Project,a=noble,n=noble,l=CRAN-Apt Packages,c=main,b=all
+     origin r2u.stat.illinois.edu
+ 500 https://r2u.stat.illinois.edu/ubuntu noble/main amd64 Packages
+     release o=CRAN-Apt Project,a=noble,n=noble,l=CRAN-Apt Packages,c=main,b=amd64
+     origin r2u.stat.illinois.edu
+ 500 https://dl.google.com/linux/chrome-stable/deb stable/main amd64 Packages
+     release v=1.0,o=Google LLC,a=stable,n=stable,l=Google,c=main,b=amd64
+     origin dl.google.com
+ 500 https://cloud.r-project.org/bin/linux/ubuntu noble-cran40/ Packages
+     release v=24.04,o=CRAN,a=noble-cran40,n=noble-cran40,l=CRAN,c=
+     origin cloud.r-project.org
+Pinned packages:
+     nsight-compute -> 2022.4.1.6~12.0.1-4build4 with priority -1
+     nsight-systems -> 2022.4.2.50~12.0.1-4build4 with priority -1

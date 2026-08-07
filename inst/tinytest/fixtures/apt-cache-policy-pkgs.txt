@@ -1,0 +1,23 @@
+dpkg:
+  Installed: 1.22.6ubuntu6.6
+  Candidate: 1.22.6ubuntu6.6
+  Version table:
+ *** 1.22.6ubuntu6.6 500
+        500 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages
+        500 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages
+        100 /var/lib/dpkg/status
+     1.22.6ubuntu6 500
+        500 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages
+bash:
+  Installed: 5.2.21-2ubuntu4
+  Candidate: 5.2.21-2ubuntu4
+  Version table:
+ *** 5.2.21-2ubuntu4 500
+        500 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages
+        100 /var/lib/dpkg/status
+linux-image-6.14.0-1014-oem:
+  Installed: (none)
+  Candidate: (none)
+  Version table:
+     6.14.0-1014.14 -1
+        100 /var/lib/dpkg/status
