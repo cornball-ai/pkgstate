@@ -28,25 +28,23 @@ dpkg_installed <- function() {
 parse_dpkg_w <- function(lines) {
     lines <- lines[nzchar(lines)]
     if (length(lines) == 0L) {
-        return(data.frame(
-            package = character(), version = character(),
-            architecture = character(), status = character(),
-            stringsAsFactors = FALSE
-        ))
+        return(data.frame(package = character(), version = character(),
+                          architecture = character(), status = character(),
+                          stringsAsFactors = FALSE))
     }
     parts <- strsplit(lines, "\t", fixed = TRUE)
     bad <- which(lengths(parts) != 4L)
     if (length(bad) > 0L) {
         stop_rdpkg(
-            "unparseable dpkg-query output (line ", bad[1L], " of ",
-            length(lines), ")",
-            class = "runix_parse_error"
+                   "unparseable dpkg-query output (line ", bad[1L], " of ",
+                   length(lines), ")",
+                   class = "runix_parse_error"
         )
     }
     m <- matrix(unlist(parts, use.names = FALSE), ncol = 4L, byrow = TRUE)
     data.frame(
-        package = m[, 1L], version = m[, 2L],
-        architecture = m[, 3L], status = m[, 4L],
-        stringsAsFactors = FALSE
+               package = m[, 1L], version = m[, 2L],
+               architecture = m[, 3L], status = m[, 4L],
+               stringsAsFactors = FALSE
     )
 }
