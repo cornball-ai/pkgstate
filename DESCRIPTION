@@ -14,6 +14,7 @@ Description: Structured, read-only queries of installed-package state ('dpkg')
     live in the 'rapt' package.
 License: MIT + file LICENSE
 OS_type: unix
+SystemRequirements: dpkg
 Suggests: tinytest
 Encoding: UTF-8
 Config/roxygen2/version: 8.0.0
