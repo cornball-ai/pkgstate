@@ -22,8 +22,17 @@
 #' }
 #' @export
 apt_origins <- function(packages) {
-    outputs <- run_policy_chunks(packages)
+    rows <- joined_policy_rows(run_policy_chunks(packages))
+    rows[c("package", "version", "priority", "origin", "site", "suite",
+            "component", "installed")]
+}
 
+## Internal single pass shared by apt_origins() and apt_upgradable():
+## parses the per-package outputs, fetches and parses the global policy
+## table, and joins release fields onto every source row. Carries the
+## phased column (Phased-Update-Percentage of the version, NA when
+## unannotated), which apt_origins() drops.
+joined_policy_rows <- function(outputs) {
     res <- runner()("apt-cache", "policy")
     if (res$status != 0L) {
         stop_rdpkg("apt-cache policy failed with status ", res$status)
@@ -39,6 +48,7 @@ apt_origins <- function(packages) {
                           priority = integer(), origin = character(),
                           site = character(), suite = character(),
                           component = character(), installed = logical(),
+                          phased = integer(),
                           stringsAsFactors = FALSE
             ))
     }
@@ -54,6 +64,7 @@ apt_origins <- function(packages) {
                priority = rows$priority, origin = global$origin[idx],
                site = global$site[idx], suite = global$suite[idx],
                component = global$component[idx], installed = rows$installed,
+               phased = rows$phased,
                stringsAsFactors = FALSE
     )
 }
@@ -124,11 +135,12 @@ parse_policy_global <- function(lines) {
 ## Fail-closed: any unrecognized line is an error.
 parse_policy_packages <- function(lines) {
     package <- version <- key <- character()
-    priority <- integer()
+    priority <- phased <- integer()
     installed <- logical()
     n <- 0L
     cur_pkg <- cur_ver <- NA_character_
     cur_inst <- FALSE
+    cur_phased <- NA_integer_
     for (i in seq_along(lines)) {
         line <- lines[i]
         if (!nzchar(line)) {
@@ -146,9 +158,8 @@ parse_policy_packages <- function(lines) {
             }
             cur_inst <- grepl("^ \\*\\*\\* ", line)
             tok <- strsplit(trimws(sub("^ \\*\\*\\*", "", line)), " +")[[1L]]
-            ## "VERSION PRIORITY", optionally annotated "(phased N%)" for
-            ## phased updates; the annotation is ignored here (it matters
-            ## for upgradability, not origins).
+            ## "VERSION PRIORITY", optionally annotated "(phased N%)" —
+            ## the archive's Phased-Update-Percentage, captured verbatim.
             ok <- length(tok) == 2L ||
             (length(tok) == 4L && tok[3L] == "(phased" &&
                 grepl("%\\)$", tok[4L]))
@@ -157,6 +168,11 @@ parse_policy_packages <- function(lines) {
                            class = "runix_parse_error")
             }
             cur_ver <- tok[1L]
+            cur_phased <- if (length(tok) == 4L) {
+                as.integer(sub("%\\)$", "", tok[4L]))
+            } else {
+                NA_integer_
+            }
         } else if (grepl("^        -?[0-9]+ ", line)) {
             if (is.na(cur_pkg) || is.na(cur_ver)) {
                 stop_rdpkg("source line before any version line (line ", i,
@@ -179,11 +195,13 @@ parse_policy_packages <- function(lines) {
             version[n] <- cur_ver
             priority[n] <- as.integer(tok[1L])
             installed[n] <- cur_inst
+            phased[n] <- cur_phased
         } else {
             stop_rdpkg("unparseable apt-cache policy line (line ", i, "): ",
                        line, class = "runix_parse_error")
         }
     }
     data.frame(package = package, version = version, priority = priority,
-               key = key, installed = installed, stringsAsFactors = FALSE)
+               key = key, installed = installed, phased = phased,
+               stringsAsFactors = FALSE)
 }

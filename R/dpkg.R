@@ -22,6 +22,16 @@ dpkg_installed <- function() {
     parse_dpkg_w(res$output)
 }
 
+## Native dpkg architecture, for building name:arch query spellings.
+native_arch <- function() {
+    res <- runner()("dpkg", "--print-architecture")
+    if (res$status != 0L || length(res$output) < 1L ||
+        !nzchar(trimws(res$output[1L]))) {
+        stop_rdpkg("dpkg --print-architecture failed")
+    }
+    trimws(res$output[1L])
+}
+
 ## Pure parser, separated from the runner so fixture tests exercise it
 ## offline. Fail-closed: any line that is not exactly 4 tab-separated
 ## fields is an error, never a guess.
