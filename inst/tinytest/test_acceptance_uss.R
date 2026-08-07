@@ -7,6 +7,10 @@
 # packages = NULL all-known form belongs to the future native libapt
 # backend. Live-system test: runs at home only, and can race a concurrent
 # apt transaction (unattended-upgrades) - rerun on mismatch.
+#
+# BOUNDARY: this comparison against `pro security-status` is a local
+# acceptance test only. Never wire it into R CMD check or CI - those
+# contexts are covered by the fixture tests alone.
 
 if (!at_home()) {
     exit_file("acceptance test runs at home only")
