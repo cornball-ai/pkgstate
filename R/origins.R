@@ -23,7 +23,7 @@
 apt_origins <- function(packages) {
     if (is.null(packages)) {
         stop_rdpkg("packages = NULL (all known packages) is reserved for ",
-            "the native libapt backend; pass explicit package names")
+                   "the native libapt backend; pass explicit package names")
     }
     if (!is.character(packages) || length(packages) == 0L ||
         anyNA(packages) || !all(nzchar(packages))) {
@@ -40,7 +40,7 @@ apt_origins <- function(packages) {
     chunks <- split(packages, ceiling(seq_along(packages) / 1000))
     rows <- lapply(chunks, function(chunk) {
         res <- runner()("apt-cache",
-            c("policy", vapply(chunk, shQuote, character(1))))
+                   c("policy", vapply(chunk, shQuote, character(1))))
         if (res$status != 0L) {
             stop_rdpkg("apt-cache policy failed with status ", res$status)
         }
@@ -50,26 +50,26 @@ apt_origins <- function(packages) {
 
     if (nrow(rows) == 0L) {
         return(data.frame(
-            package = character(), version = character(),
-            priority = integer(), origin = character(),
-            site = character(), suite = character(),
-            component = character(), installed = logical(),
-            stringsAsFactors = FALSE
-        ))
+                          package = character(), version = character(),
+                          priority = integer(), origin = character(),
+                          site = character(), suite = character(),
+                          component = character(), installed = logical(),
+                          stringsAsFactors = FALSE
+            ))
     }
 
     idx <- match(rows$key, global$key)
     if (anyNA(idx)) {
         stop_rdpkg("package source not present in the global policy table (",
-            rows$key[which(is.na(idx))[1L]],
-            "); the apt cache may have changed between queries - retry")
+                   rows$key[which(is.na(idx))[1L]],
+                   "); the apt cache may have changed between queries - retry")
     }
     data.frame(
-        package = rows$package, version = rows$version,
-        priority = rows$priority, origin = global$origin[idx],
-        site = global$site[idx], suite = global$suite[idx],
-        component = global$component[idx], installed = rows$installed,
-        stringsAsFactors = FALSE
+               package = rows$package, version = rows$version,
+               priority = rows$priority, origin = global$origin[idx],
+               site = global$site[idx], suite = global$suite[idx],
+               component = global$component[idx], installed = rows$installed,
+               stringsAsFactors = FALSE
     )
 }
 
@@ -81,7 +81,7 @@ parse_policy_global <- function(lines) {
     start <- match("Package files:", lines)
     if (is.na(start)) {
         stop_rdpkg("apt-cache policy output has no 'Package files:' section",
-            class = "runix_parse_error")
+                   class = "runix_parse_error")
     }
     key <- origin <- suite <- component <- site <- character()
     n <- 0L
@@ -97,32 +97,41 @@ parse_policy_global <- function(lines) {
                 tok[2L]
             } else if (length(tok) == 5L && tok[5L] == "Packages") {
                 paste(tok[2L], tok[3L], tok[4L])
+            } else if (length(tok) == 4L && tok[4L] == "Packages") {
+                ## exact-path repo (dist ends in "/"): no component, no arch
+                paste(tok[2L], tok[3L])
             } else {
                 stop_rdpkg("unparseable package-files entry (line ", i, "): ",
-                    line, class = "runix_parse_error")
+                           line, class = "runix_parse_error")
             }
             origin[n] <- suite[n] <- component[n] <- site[n] <- ""
         } else if (grepl("^ +release ", line) && n > 0L) {
             fields <- strsplit(
-                strsplit(sub("^ +release ", "", line), ",", fixed = TRUE)[[1L]],
-                "=", fixed = TRUE
+                               strsplit(sub("^ +release ", "", line), ",", fixed = TRUE)[[1L]],
+                               "=", fixed = TRUE
             )
             for (f in fields) {
                 if (length(f) == 2L) {
-                    if (f[1L] == "o") origin[n] <- f[2L]
-                    if (f[1L] == "a") suite[n] <- f[2L]
-                    if (f[1L] == "c") component[n] <- f[2L]
+                    if (f[1L] == "o") {
+                        origin[n] <- f[2L]
+                    }
+                    if (f[1L] == "a") {
+                        suite[n] <- f[2L]
+                    }
+                    if (f[1L] == "c") {
+                        component[n] <- f[2L]
+                    }
                 }
             }
         } else if (grepl("^ +origin ", line) && n > 0L) {
             site[n] <- sub("^ +origin ", "", line)
         } else if (nzchar(trimws(line))) {
             stop_rdpkg("unparseable line in package-files section (line ",
-                i, "): ", line, class = "runix_parse_error")
+                       i, "): ", line, class = "runix_parse_error")
         }
     }
     data.frame(key = key, origin = origin, suite = suite,
-        component = component, site = site, stringsAsFactors = FALSE)
+               component = component, site = site, stringsAsFactors = FALSE)
 }
 
 ## Parses `apt-cache policy pkg...` version tables into one row per
@@ -145,23 +154,22 @@ parse_policy_packages <- function(lines) {
             cur_ver <- NA_character_
         } else if (grepl("^  (Installed|Candidate|Version table):", line)) {
             next
-        } else if (grepl("^ \\*\\*\\* ", line) ||
-            grepl("^     [^ ]", line)) {
+        } else if (grepl("^ \\*\\*\\* ", line) || grepl("^     [^ ]", line)) {
             if (is.na(cur_pkg)) {
-                stop_rdpkg("version line before any package header (line ",
-                    i, ")", class = "runix_parse_error")
+                stop_rdpkg("version line before any package header (line ", i,
+                           ")", class = "runix_parse_error")
             }
             cur_inst <- grepl("^ \\*\\*\\* ", line)
             tok <- strsplit(trimws(sub("^ \\*\\*\\*", "", line)), " +")[[1L]]
             if (length(tok) != 2L) {
                 stop_rdpkg("unparseable version line (line ", i, "): ", line,
-                    class = "runix_parse_error")
+                           class = "runix_parse_error")
             }
             cur_ver <- tok[1L]
         } else if (grepl("^        -?[0-9]+ ", line)) {
             if (is.na(cur_pkg) || is.na(cur_ver)) {
                 stop_rdpkg("source line before any version line (line ", i,
-                    ")", class = "runix_parse_error")
+                           ")", class = "runix_parse_error")
             }
             tok <- strsplit(trimws(line), " +")[[1L]]
             n <- n + 1L
@@ -169,9 +177,12 @@ parse_policy_packages <- function(lines) {
                 tok[2L]
             } else if (length(tok) == 5L && tok[5L] == "Packages") {
                 paste(tok[2L], tok[3L], tok[4L])
+            } else if (length(tok) == 4L && tok[4L] == "Packages") {
+                ## exact-path repo (dist ends in "/"): no component, no arch
+                paste(tok[2L], tok[3L])
             } else {
                 stop_rdpkg("unparseable source line (line ", i, "): ", line,
-                    class = "runix_parse_error")
+                           class = "runix_parse_error")
             }
             package[n] <- cur_pkg
             version[n] <- cur_ver
@@ -179,9 +190,9 @@ parse_policy_packages <- function(lines) {
             installed[n] <- cur_inst
         } else {
             stop_rdpkg("unparseable apt-cache policy line (line ", i, "): ",
-                line, class = "runix_parse_error")
+                       line, class = "runix_parse_error")
         }
     }
     data.frame(package = package, version = version, priority = priority,
-        key = key, installed = installed, stringsAsFactors = FALSE)
+               key = key, installed = installed, stringsAsFactors = FALSE)
 }

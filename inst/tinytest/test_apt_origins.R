@@ -62,6 +62,12 @@ expect_equal(nrow(kdf), 1L)
 expect_equal(kdf$suite, "now")
 expect_false(kdf$installed)
 
+# --- Exact-path repos (e.g. the CRAN/r2u apt repo) parse in the global
+# --- table: dist with trailing slash, no component, no arch ---
+
+g <- rdpkg:::parse_policy_global(fx("apt-cache-policy-global.txt"))
+expect_true(any(grepl("cloud.r-project.org", g$key, fixed = TRUE)))
+
 # --- Unknown packages yield zero rows with contracted columns ---
 
 rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"), character()))
