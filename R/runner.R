@@ -19,9 +19,11 @@ set_runner <- function(run = NULL) {
     invisible(old)
 }
 
-## system2() invokes a shell, so callers must shQuote() any argument that
-## contains characters the shell would interpret (dpkg-query format strings,
-## user-supplied patterns).
+## On a Unix-alike, system2() concatenates the command and args into one
+## command line run via /bin/sh, so an unquoted argument can be interpreted
+## as shell syntax. Invariant: every non-literal argument (dpkg-query format
+## strings, user-supplied patterns) is shQuote()d at its call site; the
+## command name is quoted by system2() itself.
 run_system <- function(cmd, args) {
     if (Sys.which(cmd) == "") {
         stop_rdpkg("backend tool not found: ", cmd,
