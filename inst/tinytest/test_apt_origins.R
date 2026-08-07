@@ -62,6 +62,13 @@ expect_equal(nrow(kdf), 1L)
 expect_equal(kdf$suite, "now")
 expect_false(kdf$installed)
 
+# --- Phased-update annotation on version lines is tolerated and ignored ---
+
+p <- rdpkg:::parse_policy_packages(fx("apt-cache-policy-phased.txt"))
+expect_true("1.2.10-1ubuntu5.14" %in% p$version)
+expect_true(all(p$package == "alsa-ucm-conf"))
+expect_false(any(p$installed & p$version == "1.2.10-1ubuntu5.14"))
+
 # --- Exact-path repos (e.g. the CRAN/r2u apt repo) parse in the global
 # --- table: dist with trailing slash, no component, no arch ---
 

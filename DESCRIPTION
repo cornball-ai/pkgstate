@@ -1,7 +1,7 @@
 Package: rdpkg
 Type: Package
 Title: Read-Only Introspection of 'dpkg' and 'APT' State
-Version: 0.0.1.2
+Version: 0.0.1.3
 Date: 2026-08-07
 Authors@R: c(
     person("Troy", "Hernandez", role = c("aut", "cre"), email = "troy@cornball.ai",
@@ -14,7 +14,7 @@ Description: Structured, read-only queries of installed-package state ('dpkg')
     live in the 'rapt' package.
 License: MIT + file LICENSE
 OS_type: unix
-SystemRequirements: dpkg
-Suggests: tinytest
+SystemRequirements: dpkg, apt
+Suggests: jsonlite, tinytest
 Encoding: UTF-8
 Config/roxygen2/version: 8.0.0
