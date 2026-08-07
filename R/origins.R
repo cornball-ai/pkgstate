@@ -22,15 +22,7 @@
 #' }
 #' @export
 apt_origins <- function(packages) {
-    if (is.null(packages)) {
-        stop_rdpkg("packages = NULL (all known packages) is reserved for ",
-                   "the native libapt backend; pass explicit package names")
-    }
-    if (!is.character(packages) || length(packages) == 0L ||
-        anyNA(packages) || !all(nzchar(packages))) {
-        stop_rdpkg("packages must be a character vector of package names")
-    }
-    packages <- unique(packages)
+    outputs <- run_policy_chunks(packages)
 
     res <- runner()("apt-cache", "policy")
     if (res$status != 0L) {
@@ -38,16 +30,8 @@ apt_origins <- function(packages) {
     }
     global <- parse_policy_global(res$output)
 
-    chunks <- split(packages, ceiling(seq_along(packages) / 1000))
-    rows <- lapply(chunks, function(chunk) {
-        res <- runner()("apt-cache",
-                   c("policy", vapply(chunk, shQuote, character(1))))
-        if (res$status != 0L) {
-            stop_rdpkg("apt-cache policy failed with status ", res$status)
-        }
-        parse_policy_packages(res$output)
-    })
-    rows <- do.call(rbind, c(rows, list(make.row.names = FALSE)))
+    rows <- do.call(rbind, c(lapply(outputs, parse_policy_packages),
+                             list(make.row.names = FALSE)))
 
     if (nrow(rows) == 0L) {
         return(data.frame(
@@ -162,7 +146,13 @@ parse_policy_packages <- function(lines) {
             }
             cur_inst <- grepl("^ \\*\\*\\* ", line)
             tok <- strsplit(trimws(sub("^ \\*\\*\\*", "", line)), " +")[[1L]]
-            if (length(tok) != 2L) {
+            ## "VERSION PRIORITY", optionally annotated "(phased N%)" for
+            ## phased updates; the annotation is ignored here (it matters
+            ## for upgradability, not origins).
+            ok <- length(tok) == 2L ||
+            (length(tok) == 4L && tok[3L] == "(phased" &&
+                grepl("%\\)$", tok[4L]))
+            if (!ok) {
                 stop_rdpkg("unparseable version line (line ", i, "): ", line,
                            class = "runix_parse_error")
             }

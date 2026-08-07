@@ -1,0 +1,12 @@
+alsa-ucm-conf:
+  Installed: 1.2.10-1ubuntu5.13
+  Candidate: 1.2.10-1ubuntu5.14
+  Version table:
+     1.2.10-1ubuntu5.14 500 (phased 40%)
+        500 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages
+        500 http://archive.ubuntu.com/ubuntu noble-updates/main i386 Packages
+ *** 1.2.10-1ubuntu5.13 100
+        100 /var/lib/dpkg/status
+     1.2.10-1ubuntu5 500
+        500 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages
+        500 http://archive.ubuntu.com/ubuntu noble/main i386 Packages

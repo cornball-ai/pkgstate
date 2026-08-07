@@ -1,4 +1,5 @@
 # tinyrox says don't edit this manually, but it can't stop you!
 
+export(apt_candidates)
 export(apt_origins)
 export(dpkg_installed)
