@@ -119,6 +119,7 @@ rdpkg:::set_runner(fake_multi("ghostpkg\t1.0\tamd64\tinstalled", "amd64",
     fx("apt-cache-policy-global.txt"), race_policy))
 e <- tryCatch(apt_upgradable(), error = identity)
 rdpkg:::set_runner(old)
+expect_inherits(e, "rdpkg_cache_race")
 expect_inherits(e, "rdpkg_error")
 expect_true(grepl("no archive source", conditionMessage(e)))
 

@@ -57,7 +57,8 @@ joined_policy_rows <- function(outputs) {
     if (anyNA(idx)) {
         stop_rdpkg("package source not present in the global policy table (",
                    rows$key[which(is.na(idx))[1L]],
-                   "); the apt cache may have changed between queries - retry")
+                   "); the apt cache may have changed between queries - retry",
+                   class = "rdpkg_cache_race")
     }
     data.frame(
                package = rows$package, version = rows$version,
