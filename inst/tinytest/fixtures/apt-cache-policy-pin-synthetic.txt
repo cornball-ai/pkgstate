@@ -1,0 +1,9 @@
+pinnedpkg:
+  Installed: 1.0
+  Candidate: 3.0
+  Package pin: 3.0
+  Version table:
+     3.0 990
+        500 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages
+ *** 1.0 990
+        100 /var/lib/dpkg/status

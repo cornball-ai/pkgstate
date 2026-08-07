@@ -48,7 +48,7 @@ joined_policy_rows <- function(outputs) {
                           priority = integer(), origin = character(),
                           site = character(), suite = character(),
                           component = character(), installed = logical(),
-                          phased = integer(),
+                          phased = integer(), verprio = integer(),
                           stringsAsFactors = FALSE
             ))
     }
@@ -64,7 +64,7 @@ joined_policy_rows <- function(outputs) {
                priority = rows$priority, origin = global$origin[idx],
                site = global$site[idx], suite = global$suite[idx],
                component = global$component[idx], installed = rows$installed,
-               phased = rows$phased,
+               phased = rows$phased, verprio = rows$verprio,
                stringsAsFactors = FALSE
     )
 }
@@ -135,12 +135,12 @@ parse_policy_global <- function(lines) {
 ## Fail-closed: any unrecognized line is an error.
 parse_policy_packages <- function(lines) {
     package <- version <- key <- character()
-    priority <- phased <- integer()
+    priority <- phased <- verprio <- integer()
     installed <- logical()
     n <- 0L
     cur_pkg <- cur_ver <- NA_character_
     cur_inst <- FALSE
-    cur_phased <- NA_integer_
+    cur_phased <- cur_verprio <- NA_integer_
     for (i in seq_along(lines)) {
         line <- lines[i]
         if (!nzchar(line)) {
@@ -149,7 +149,8 @@ parse_policy_packages <- function(lines) {
         if (grepl("^[^ ].*:$", line)) {
             cur_pkg <- sub(":$", "", line)
             cur_ver <- NA_character_
-        } else if (grepl("^  (Installed|Candidate|Version table):", line)) {
+        } else if (grepl("^  (Installed|Candidate|Version table|Package pin):",
+                         line)) {
             next
         } else if (grepl("^ \\*\\*\\* ", line) || grepl("^     [^ ]", line)) {
             if (is.na(cur_pkg)) {
@@ -168,6 +169,9 @@ parse_policy_packages <- function(lines) {
                            class = "runix_parse_error")
             }
             cur_ver <- tok[1L]
+            ## effective (pin-altered) version priority, distinct from the
+            ## per-source priorities on the lines below it
+            cur_verprio <- as.integer(tok[2L])
             cur_phased <- if (length(tok) == 4L) {
                 as.integer(sub("%\\)$", "", tok[4L]))
             } else {
@@ -196,6 +200,7 @@ parse_policy_packages <- function(lines) {
             priority[n] <- as.integer(tok[1L])
             installed[n] <- cur_inst
             phased[n] <- cur_phased
+            verprio[n] <- cur_verprio
         } else {
             stop_rdpkg("unparseable apt-cache policy line (line ", i, "): ",
                        line, class = "runix_parse_error")
@@ -203,5 +208,5 @@ parse_policy_packages <- function(lines) {
     }
     data.frame(package = package, version = version, priority = priority,
                key = key, installed = installed, phased = phased,
-               stringsAsFactors = FALSE)
+               verprio = verprio, stringsAsFactors = FALSE)
 }
