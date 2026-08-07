@@ -77,6 +77,7 @@ parse_policy_candidates <- function(lines) {
             }
             candidate[n] <- sub("^  Candidate: ", "", line)
         } else if (grepl("^  Version table:", line) ||
+            grepl("^  Package pin: ", line) ||
             grepl("^ \\*\\*\\* ", line) || grepl("^     [^ ]", line) ||
             grepl("^        -?[0-9]+ ", line)) {
             next

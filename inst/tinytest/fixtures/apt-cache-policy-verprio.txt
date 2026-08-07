@@ -1,0 +1,6 @@
+nsight-compute:
+  Installed: (none)
+  Candidate: (none)
+  Version table:
+     2022.4.1.6~12.0.1-4build4 -1
+        500 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages

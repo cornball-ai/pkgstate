@@ -1,6 +1,8 @@
 # tinyrox says don't edit this manually, but it can't stop you!
 
+export(apt_cache_timestamps)
 export(apt_candidates)
 export(apt_origins)
+export(apt_policy)
 export(apt_upgradable)
 export(dpkg_installed)
