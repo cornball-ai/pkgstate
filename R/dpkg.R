@@ -46,9 +46,9 @@ parse_dpkg_w <- function(lines) {
     bad <- which(lengths(parts) != 4L)
     if (length(bad) > 0L) {
         stop_pkgstate(
-                   "unparseable dpkg-query output (line ", bad[1L], " of ",
-                   length(lines), ")",
-                   class = "runix_parse_error"
+                      "unparseable dpkg-query output (line ", bad[1L], " of ",
+                      length(lines), ")",
+                      class = "runix_parse_error"
         )
     }
     m <- matrix(unlist(parts, use.names = FALSE), ncol = 4L, byrow = TRUE)

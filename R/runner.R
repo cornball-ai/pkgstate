@@ -10,8 +10,8 @@
 ## strings, user-supplied patterns) is shQuote()d at its call site; the
 ## command name is quoted by system2() itself.
 .pkgstate_runner <- runix::new_runner(
-    default_env = "LC_ALL=C",
-    missing_tool_subclass = c("pkgstate_missing_tool", "pkgstate_error"))
+                                      default_env = "LC_ALL=C",
+                                      missing_tool_subclass = c("pkgstate_missing_tool", "pkgstate_error"))
 
 runner <- .pkgstate_runner$runner
 set_runner <- .pkgstate_runner$set_runner

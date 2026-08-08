@@ -4,7 +4,7 @@
 ## prepends any caller-supplied class to pkgstate_error, preserving the
 ## historical c(class, "pkgstate_error", "runix_error", "error", "condition").
 stop_pkgstate <- function(..., class = character(), call. = sys.call(-1)) {
-    cl <- call.  # force the default in this frame so the call is the caller's
+    cl <- call. # force the default in this frame so the call is the caller's
     runix::runix_abort(paste0(...), subclass = c(class, "pkgstate_error"),
                        call = cl)
 }

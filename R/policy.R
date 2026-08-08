@@ -29,7 +29,7 @@ apt_policy <- function(package) {
     cand <- parse_policy_candidates(outputs[[1L]])
     if (nrow(cand) == 0L) {
         stop_pkgstate("no such package known to apt: ", package,
-                   class = "pkgstate_unknown_package")
+                      class = "pkgstate_unknown_package")
     }
     pins <- parse_policy_pins(outputs[[1L]])
     rows <- joined_policy_rows(outputs)
@@ -65,7 +65,7 @@ parse_policy_pins <- function(lines) {
         } else if (grepl("^  Package pin: ", line)) {
             if (n == 0L) {
                 stop_pkgstate("pin line before any package header (line ", i,
-                           ")", class = "runix_parse_error")
+                              ")", class = "runix_parse_error")
             }
             pin[n] <- sub("^  Package pin: ", "", line)
         } else if (grepl("^  (Installed|Candidate|Version table):", line) ||
@@ -74,7 +74,7 @@ parse_policy_pins <- function(lines) {
             next
         } else {
             stop_pkgstate("unparseable apt-cache policy line (line ", i, "): ",
-                       line, class = "runix_parse_error")
+                          line, class = "runix_parse_error")
         }
     }
     data.frame(package = package, pin = pin, stringsAsFactors = FALSE)

@@ -56,9 +56,9 @@ joined_policy_rows <- function(outputs) {
     idx <- match(rows$key, global$key)
     if (anyNA(idx)) {
         stop_pkgstate("package source not present in the global policy table (",
-                   rows$key[which(is.na(idx))[1L]],
-                   "); the apt cache may have changed between queries - retry",
-                   class = "pkgstate_cache_race")
+                      rows$key[which(is.na(idx))[1L]],
+                      "); the apt cache may have changed between queries - retry",
+                      class = "pkgstate_cache_race")
     }
     data.frame(
                package = rows$package, version = rows$version,
@@ -78,7 +78,7 @@ parse_policy_global <- function(lines) {
     start <- match("Package files:", lines)
     if (is.na(start)) {
         stop_pkgstate("apt-cache policy output has no 'Package files:' section",
-                   class = "runix_parse_error")
+                      class = "runix_parse_error")
     }
     key <- origin <- suite <- component <- site <- character()
     n <- 0L
@@ -98,8 +98,8 @@ parse_policy_global <- function(lines) {
                 ## exact-path repo (dist ends in "/"): no component, no arch
                 paste(tok[2L], tok[3L])
             } else {
-                stop_pkgstate("unparseable package-files entry (line ", i, "): ",
-                           line, class = "runix_parse_error")
+                stop_pkgstate("unparseable package-files entry (line ", i,
+                              "): ", line, class = "runix_parse_error")
             }
             origin[n] <- suite[n] <- component[n] <- site[n] <- ""
         } else if (grepl("^ +release ", line) && n > 0L) {
@@ -124,7 +124,7 @@ parse_policy_global <- function(lines) {
             site[n] <- sub("^ +origin ", "", line)
         } else if (nzchar(trimws(line))) {
             stop_pkgstate("unparseable line in package-files section (line ",
-                       i, "): ", line, class = "runix_parse_error")
+                          i, "): ", line, class = "runix_parse_error")
         }
     }
     data.frame(key = key, origin = origin, suite = suite,
@@ -156,7 +156,7 @@ parse_policy_packages <- function(lines) {
         } else if (grepl("^ \\*\\*\\* ", line) || grepl("^     [^ ]", line)) {
             if (is.na(cur_pkg)) {
                 stop_pkgstate("version line before any package header (line ", i,
-                           ")", class = "runix_parse_error")
+                              ")", class = "runix_parse_error")
             }
             cur_inst <- grepl("^ \\*\\*\\* ", line)
             tok <- strsplit(trimws(sub("^ \\*\\*\\*", "", line)), " +")[[1L]]
@@ -167,7 +167,7 @@ parse_policy_packages <- function(lines) {
                 grepl("%\\)$", tok[4L]))
             if (!ok) {
                 stop_pkgstate("unparseable version line (line ", i, "): ", line,
-                           class = "runix_parse_error")
+                              class = "runix_parse_error")
             }
             cur_ver <- tok[1L]
             ## effective (pin-altered) version priority, distinct from the
@@ -181,7 +181,7 @@ parse_policy_packages <- function(lines) {
         } else if (grepl("^        -?[0-9]+ ", line)) {
             if (is.na(cur_pkg) || is.na(cur_ver)) {
                 stop_pkgstate("source line before any version line (line ", i,
-                           ")", class = "runix_parse_error")
+                              ")", class = "runix_parse_error")
             }
             tok <- strsplit(trimws(line), " +")[[1L]]
             n <- n + 1L
@@ -194,7 +194,7 @@ parse_policy_packages <- function(lines) {
                 paste(tok[2L], tok[3L])
             } else {
                 stop_pkgstate("unparseable source line (line ", i, "): ", line,
-                           class = "runix_parse_error")
+                              class = "runix_parse_error")
             }
             package[n] <- cur_pkg
             version[n] <- cur_ver
@@ -204,7 +204,7 @@ parse_policy_packages <- function(lines) {
             verprio[n] <- cur_verprio
         } else {
             stop_pkgstate("unparseable apt-cache policy line (line ", i, "): ",
-                       line, class = "runix_parse_error")
+                          line, class = "runix_parse_error")
         }
     }
     data.frame(package = package, version = version, priority = priority,
