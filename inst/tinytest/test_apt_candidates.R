@@ -3,7 +3,7 @@
 fixdir <- if (dir.exists("fixtures")) {
     "fixtures"
 } else {
-    system.file("tinytest", "fixtures", package = "rdpkg")
+    system.file("tinytest", "fixtures", package = "pkgstate")
 }
 fx <- function(f) readLines(file.path(fixdir, f))
 
@@ -15,9 +15,9 @@ cols <- c("package", "installed", "candidate")
 
 # --- Recorded real output parses to the contracted shape ---
 
-old <- rdpkg:::set_runner(fake(fx("apt-cache-policy-pkgs.txt")))
+old <- pkgstate:::set_runner(fake(fx("apt-cache-policy-pkgs.txt")))
 df <- apt_candidates(c("dpkg", "bash", "linux-image-6.14.0-1014-oem"))
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 
 expect_equal(names(df), cols)
 d <- df[df$package == "dpkg", ]
@@ -29,24 +29,24 @@ expect_true(is.na(k$candidate))
 
 # --- Phased fixture: installed and candidate differ ---
 
-rdpkg:::set_runner(fake(fx("apt-cache-policy-phased.txt")))
+pkgstate:::set_runner(fake(fx("apt-cache-policy-phased.txt")))
 p <- apt_candidates("alsa-ucm-conf")
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_equal(p$installed, "1.2.10-1ubuntu5.13")
 expect_equal(p$candidate, "1.2.10-1ubuntu5.14")
 
 # --- Fail-closed on malformed output ---
 
-rdpkg:::set_runner(fake(fx("apt-cache-policy-malformed.txt")))
+pkgstate:::set_runner(fake(fx("apt-cache-policy-malformed.txt")))
 e <- tryCatch(apt_candidates("dpkg"), error = identity)
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_inherits(e, "runix_parse_error")
 
 # --- Unknown packages yield zero rows ---
 
-rdpkg:::set_runner(fake(character()))
+pkgstate:::set_runner(fake(character()))
 df0 <- apt_candidates("no-such-package-xyzzy")
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_equal(nrow(df0), 0L)
 expect_equal(names(df0), cols)
 

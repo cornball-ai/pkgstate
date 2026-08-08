@@ -1,4 +1,4 @@
-# rdpkg
+# pkgstate
 
 Read-only introspection of dpkg and APT state from R: installed packages,
 candidate versions, origins, and upgradeability, returned as plain data
@@ -25,7 +25,7 @@ live in [rapt](https://github.com/cornball-ai/rapt).
 ## Install
 
 ```r
-remotes::install_github("cornball-ai/rdpkg")
+remotes::install_github("cornball-ai/pkgstate")
 ```
 
 Debian-family Linux only (`OS_type: unix`; requires dpkg).

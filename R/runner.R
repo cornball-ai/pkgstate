@@ -26,8 +26,8 @@ set_runner <- function(run = NULL) {
 ## command name is quoted by system2() itself.
 run_system <- function(cmd, args) {
     if (Sys.which(cmd) == "") {
-        stop_rdpkg("backend tool not found: ", cmd,
-                   class = "rdpkg_missing_tool")
+        stop_pkgstate("backend tool not found: ", cmd,
+                   class = "pkgstate_missing_tool")
     }
     out <- suppressWarnings(
                             system2(cmd, args, stdout = TRUE, stderr = FALSE, env = "LC_ALL=C")

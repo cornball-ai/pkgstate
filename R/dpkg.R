@@ -17,7 +17,7 @@ dpkg_installed <- function() {
     fmt <- "${Package}\t${Version}\t${Architecture}\t${db:Status-Status}\n"
     res <- runner()("dpkg-query", c("-W", shQuote(paste0("-f=", fmt))))
     if (res$status != 0L) {
-        stop_rdpkg("dpkg-query -W failed with status ", res$status)
+        stop_pkgstate("dpkg-query -W failed with status ", res$status)
     }
     parse_dpkg_w(res$output)
 }
@@ -27,7 +27,7 @@ native_arch <- function() {
     res <- runner()("dpkg", "--print-architecture")
     if (res$status != 0L || length(res$output) < 1L ||
         !nzchar(trimws(res$output[1L]))) {
-        stop_rdpkg("dpkg --print-architecture failed")
+        stop_pkgstate("dpkg --print-architecture failed")
     }
     trimws(res$output[1L])
 }
@@ -45,7 +45,7 @@ parse_dpkg_w <- function(lines) {
     parts <- strsplit(lines, "\t", fixed = TRUE)
     bad <- which(lengths(parts) != 4L)
     if (length(bad) > 0L) {
-        stop_rdpkg(
+        stop_pkgstate(
                    "unparseable dpkg-query output (line ", bad[1L], " of ",
                    length(lines), ")",
                    class = "runix_parse_error"

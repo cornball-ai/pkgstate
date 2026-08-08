@@ -1,5 +1,5 @@
 
 if (requireNamespace("tinytest", quietly = TRUE)) {
-  tinytest::test_package("rdpkg")
+  tinytest::test_package("pkgstate")
 }
 

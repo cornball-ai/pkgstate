@@ -3,7 +3,7 @@
 fixdir <- if (dir.exists("fixtures")) {
     "fixtures"
 } else {
-    system.file("tinytest", "fixtures", package = "rdpkg")
+    system.file("tinytest", "fixtures", package = "pkgstate")
 }
 fx <- function(f) readLines(file.path(fixdir, f))
 
@@ -32,11 +32,11 @@ installed_lines <- c(
     "alsa-ucm-conf\t1.2.10-1ubuntu5.13\tall\tinstalled",
     "dpkg\t1.22.6ubuntu6.6\tamd64\tinstalled"
 )
-old <- rdpkg:::set_runner(fake_multi(installed_lines, "amd64",
+old <- pkgstate:::set_runner(fake_multi(installed_lines, "amd64",
     fx("apt-cache-policy-global.txt"),
     c(fx("apt-cache-policy-phased.txt"), fx("apt-cache-policy-pkgs.txt"))))
 up <- apt_upgradable()
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 
 expect_equal(names(up), cols)
 expect_equal(nrow(up), 1L)
@@ -62,10 +62,10 @@ sec_policy <- c(
     " *** 1.0 100",
     "        100 /var/lib/dpkg/status"
 )
-rdpkg:::set_runner(fake_multi("fakepkg\t1.0\tamd64\tinstalled", "amd64",
+pkgstate:::set_runner(fake_multi("fakepkg\t1.0\tamd64\tinstalled", "amd64",
     fx("apt-cache-policy-global.txt"), sec_policy))
 sec <- apt_upgradable()
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_equal(sec$package, "fakepkg")
 expect_true(sec$security)
 expect_equal(sec$suite, "noble-security")
@@ -87,21 +87,21 @@ mixed_policy <- c(
         "noble-security/main amd64 Packages"),
     "        100 /var/lib/dpkg/status"
 )
-rdpkg:::set_runner(fake_multi("mixedpkg\t1.0\tamd64\tinstalled", "amd64",
+pkgstate:::set_runner(fake_multi("mixedpkg\t1.0\tamd64\tinstalled", "amd64",
     fx("apt-cache-policy-global.txt"), mixed_policy))
 mixed <- apt_upgradable()
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_equal(mixed$package, "mixedpkg")
 expect_false(mixed$security)
 expect_equal(mixed$suite, "noble-updates")
 
 # --- Nothing upgradable means zero rows with contracted columns ---
 
-rdpkg:::set_runner(fake_multi("dpkg\t1.22.6ubuntu6.6\tamd64\tinstalled",
+pkgstate:::set_runner(fake_multi("dpkg\t1.22.6ubuntu6.6\tamd64\tinstalled",
     "amd64", fx("apt-cache-policy-global.txt"),
     fx("apt-cache-policy-pkgs.txt")))
 none <- apt_upgradable()
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_equal(nrow(none), 0L)
 expect_equal(names(none), cols)
 
@@ -115,12 +115,12 @@ race_policy <- c(
     " *** 1.0 100",
     "        100 /var/lib/dpkg/status"
 )
-rdpkg:::set_runner(fake_multi("ghostpkg\t1.0\tamd64\tinstalled", "amd64",
+pkgstate:::set_runner(fake_multi("ghostpkg\t1.0\tamd64\tinstalled", "amd64",
     fx("apt-cache-policy-global.txt"), race_policy))
 e <- tryCatch(apt_upgradable(), error = identity)
-rdpkg:::set_runner(old)
-expect_inherits(e, "rdpkg_cache_race")
-expect_inherits(e, "rdpkg_error")
+pkgstate:::set_runner(old)
+expect_inherits(e, "pkgstate_cache_race")
+expect_inherits(e, "pkgstate_error")
 expect_true(grepl("no archive source", conditionMessage(e)))
 
 # --- Live smoke tests ---

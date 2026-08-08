@@ -1,6 +1,6 @@
 # Phase 1 acceptance (contract: runix docs/phase1-introspection-contracts.md):
 # reproduce ubuntu-security-status's installed-package classification from
-# rdpkg exported functions alone, validated against the machine-readable
+# pkgstate exported functions alone, validated against the machine-readable
 # `pro security-status --format json` (which u-s-s itself defers to).
 #
 # The installed-package vector is passed to apt_origins() explicitly; the

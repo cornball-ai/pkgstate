@@ -6,7 +6,7 @@
 fixdir <- if (dir.exists("fixtures")) {
     "fixtures"
 } else {
-    system.file("tinytest", "fixtures", package = "rdpkg")
+    system.file("tinytest", "fixtures", package = "pkgstate")
 }
 tsv <- readLines(file.path(fixdir, "uss-origin-tuples.tsv"))
 expect_true(any(grepl("^# update-manager-core .", tsv)))

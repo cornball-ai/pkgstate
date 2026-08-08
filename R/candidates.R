@@ -30,12 +30,12 @@ apt_candidates <- function(packages) {
 ## one output vector per chunk.
 run_policy_chunks <- function(packages) {
     if (is.null(packages)) {
-        stop_rdpkg("packages = NULL (all known packages) is reserved for ",
+        stop_pkgstate("packages = NULL (all known packages) is reserved for ",
                    "the native libapt backend; pass explicit package names")
     }
     if (!is.character(packages) || length(packages) == 0L ||
         anyNA(packages) || !all(nzchar(packages))) {
-        stop_rdpkg("packages must be a character vector of package names")
+        stop_pkgstate("packages must be a character vector of package names")
     }
     packages <- unique(packages)
     chunks <- split(packages, ceiling(seq_along(packages) / 1000))
@@ -43,7 +43,7 @@ run_policy_chunks <- function(packages) {
         res <- runner()("apt-cache",
             c("policy", vapply(chunk, shQuote, character(1))))
         if (res$status != 0L) {
-            stop_rdpkg("apt-cache policy failed with status ", res$status)
+            stop_pkgstate("apt-cache policy failed with status ", res$status)
         }
         res$output
     })
@@ -66,13 +66,13 @@ parse_policy_candidates <- function(lines) {
             installed[n] <- candidate[n] <- NA_character_
         } else if (grepl("^  Installed: ", line)) {
             if (n == 0L) {
-                stop_rdpkg("Installed line before any package header (line ",
+                stop_pkgstate("Installed line before any package header (line ",
                            i, ")", class = "runix_parse_error")
             }
             installed[n] <- sub("^  Installed: ", "", line)
         } else if (grepl("^  Candidate: ", line)) {
             if (n == 0L) {
-                stop_rdpkg("Candidate line before any package header (line ",
+                stop_pkgstate("Candidate line before any package header (line ",
                            i, ")", class = "runix_parse_error")
             }
             candidate[n] <- sub("^  Candidate: ", "", line)
@@ -82,12 +82,12 @@ parse_policy_candidates <- function(lines) {
             grepl("^        -?[0-9]+ ", line)) {
             next
         } else {
-            stop_rdpkg("unparseable apt-cache policy line (line ", i, "): ",
+            stop_pkgstate("unparseable apt-cache policy line (line ", i, "): ",
                        line, class = "runix_parse_error")
         }
     }
     if (n > 0L && (anyNA(installed) || anyNA(candidate))) {
-        stop_rdpkg("package block missing Installed or Candidate line",
+        stop_pkgstate("package block missing Installed or Candidate line",
                    class = "runix_parse_error")
     }
     installed[installed == "(none)"] <- NA_character_

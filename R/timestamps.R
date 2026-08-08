@@ -20,10 +20,10 @@
 apt_cache_timestamps <- function(lists_dir = "/var/lib/apt/lists",
                                  status_file = "/var/lib/dpkg/status") {
     if (!dir.exists(lists_dir)) {
-        stop_rdpkg("apt lists directory not found: ", lists_dir)
+        stop_pkgstate("apt lists directory not found: ", lists_dir)
     }
     if (!file.exists(status_file)) {
-        stop_rdpkg("dpkg status file not found: ", status_file)
+        stop_pkgstate("dpkg status file not found: ", status_file)
     }
     stamps <- list.files(lists_dir, full.names = TRUE)
     stamps <- stamps[!dir.exists(stamps) & basename(stamps) != "lock"]

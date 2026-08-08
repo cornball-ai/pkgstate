@@ -35,7 +35,7 @@ apt_origins <- function(packages) {
 joined_policy_rows <- function(outputs) {
     res <- runner()("apt-cache", "policy")
     if (res$status != 0L) {
-        stop_rdpkg("apt-cache policy failed with status ", res$status)
+        stop_pkgstate("apt-cache policy failed with status ", res$status)
     }
     global <- parse_policy_global(res$output)
 
@@ -55,10 +55,10 @@ joined_policy_rows <- function(outputs) {
 
     idx <- match(rows$key, global$key)
     if (anyNA(idx)) {
-        stop_rdpkg("package source not present in the global policy table (",
+        stop_pkgstate("package source not present in the global policy table (",
                    rows$key[which(is.na(idx))[1L]],
                    "); the apt cache may have changed between queries - retry",
-                   class = "rdpkg_cache_race")
+                   class = "pkgstate_cache_race")
     }
     data.frame(
                package = rows$package, version = rows$version,
@@ -77,7 +77,7 @@ joined_policy_rows <- function(outputs) {
 parse_policy_global <- function(lines) {
     start <- match("Package files:", lines)
     if (is.na(start)) {
-        stop_rdpkg("apt-cache policy output has no 'Package files:' section",
+        stop_pkgstate("apt-cache policy output has no 'Package files:' section",
                    class = "runix_parse_error")
     }
     key <- origin <- suite <- component <- site <- character()
@@ -98,7 +98,7 @@ parse_policy_global <- function(lines) {
                 ## exact-path repo (dist ends in "/"): no component, no arch
                 paste(tok[2L], tok[3L])
             } else {
-                stop_rdpkg("unparseable package-files entry (line ", i, "): ",
+                stop_pkgstate("unparseable package-files entry (line ", i, "): ",
                            line, class = "runix_parse_error")
             }
             origin[n] <- suite[n] <- component[n] <- site[n] <- ""
@@ -123,7 +123,7 @@ parse_policy_global <- function(lines) {
         } else if (grepl("^ +origin ", line) && n > 0L) {
             site[n] <- sub("^ +origin ", "", line)
         } else if (nzchar(trimws(line))) {
-            stop_rdpkg("unparseable line in package-files section (line ",
+            stop_pkgstate("unparseable line in package-files section (line ",
                        i, "): ", line, class = "runix_parse_error")
         }
     }
@@ -155,7 +155,7 @@ parse_policy_packages <- function(lines) {
             next
         } else if (grepl("^ \\*\\*\\* ", line) || grepl("^     [^ ]", line)) {
             if (is.na(cur_pkg)) {
-                stop_rdpkg("version line before any package header (line ", i,
+                stop_pkgstate("version line before any package header (line ", i,
                            ")", class = "runix_parse_error")
             }
             cur_inst <- grepl("^ \\*\\*\\* ", line)
@@ -166,7 +166,7 @@ parse_policy_packages <- function(lines) {
             (length(tok) == 4L && tok[3L] == "(phased" &&
                 grepl("%\\)$", tok[4L]))
             if (!ok) {
-                stop_rdpkg("unparseable version line (line ", i, "): ", line,
+                stop_pkgstate("unparseable version line (line ", i, "): ", line,
                            class = "runix_parse_error")
             }
             cur_ver <- tok[1L]
@@ -180,7 +180,7 @@ parse_policy_packages <- function(lines) {
             }
         } else if (grepl("^        -?[0-9]+ ", line)) {
             if (is.na(cur_pkg) || is.na(cur_ver)) {
-                stop_rdpkg("source line before any version line (line ", i,
+                stop_pkgstate("source line before any version line (line ", i,
                            ")", class = "runix_parse_error")
             }
             tok <- strsplit(trimws(line), " +")[[1L]]
@@ -193,7 +193,7 @@ parse_policy_packages <- function(lines) {
                 ## exact-path repo (dist ends in "/"): no component, no arch
                 paste(tok[2L], tok[3L])
             } else {
-                stop_rdpkg("unparseable source line (line ", i, "): ", line,
+                stop_pkgstate("unparseable source line (line ", i, "): ", line,
                            class = "runix_parse_error")
             }
             package[n] <- cur_pkg
@@ -203,7 +203,7 @@ parse_policy_packages <- function(lines) {
             phased[n] <- cur_phased
             verprio[n] <- cur_verprio
         } else {
-            stop_rdpkg("unparseable apt-cache policy line (line ", i, "): ",
+            stop_pkgstate("unparseable apt-cache policy line (line ", i, "): ",
                        line, class = "runix_parse_error")
         }
     }

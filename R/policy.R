@@ -23,13 +23,13 @@
 apt_policy <- function(package) {
     if (!is.character(package) || length(package) != 1L ||
         is.na(package) || !nzchar(package)) {
-        stop_rdpkg("package must be a single package name")
+        stop_pkgstate("package must be a single package name")
     }
     outputs <- run_policy_chunks(package)
     cand <- parse_policy_candidates(outputs[[1L]])
     if (nrow(cand) == 0L) {
-        stop_rdpkg("no such package known to apt: ", package,
-                   class = "rdpkg_unknown_package")
+        stop_pkgstate("no such package known to apt: ", package,
+                   class = "pkgstate_unknown_package")
     }
     pins <- parse_policy_pins(outputs[[1L]])
     rows <- joined_policy_rows(outputs)
@@ -64,7 +64,7 @@ parse_policy_pins <- function(lines) {
             pin[n] <- NA_character_
         } else if (grepl("^  Package pin: ", line)) {
             if (n == 0L) {
-                stop_rdpkg("pin line before any package header (line ", i,
+                stop_pkgstate("pin line before any package header (line ", i,
                            ")", class = "runix_parse_error")
             }
             pin[n] <- sub("^  Package pin: ", "", line)
@@ -73,7 +73,7 @@ parse_policy_pins <- function(lines) {
             grepl("^        -?[0-9]+ ", line)) {
             next
         } else {
-            stop_rdpkg("unparseable apt-cache policy line (line ", i, "): ",
+            stop_pkgstate("unparseable apt-cache policy line (line ", i, "): ",
                        line, class = "runix_parse_error")
         }
     }

@@ -3,7 +3,7 @@
 fixdir <- if (dir.exists("fixtures")) {
     "fixtures"
 } else {
-    system.file("tinytest", "fixtures", package = "rdpkg")
+    system.file("tinytest", "fixtures", package = "pkgstate")
 }
 fx <- function(f) readLines(file.path(fixdir, f))
 
@@ -23,10 +23,10 @@ vcols <- c("version", "version_priority", "priority", "origin", "site",
 # --- Real pinned-out package (recorded): effective version priority -1
 # --- differs from the source priority 500 ---
 
-old <- rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
+old <- pkgstate:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
     fx("apt-cache-policy-verprio.txt")))
 p <- apt_policy("nsight-compute")
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 
 expect_equal(p$package, "nsight-compute")
 expect_true(is.na(p$installed))
@@ -40,10 +40,10 @@ expect_equal(p$versions$component, "multiverse")
 # --- Synthetic "Package pin:" block (apt's documented format; no real
 # --- package pin exists on the recording machine) ---
 
-rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
+pkgstate:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
     fx("apt-cache-policy-pin-synthetic.txt")))
 pp <- apt_policy("pinnedpkg")
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 
 expect_equal(pp$pin, "3.0")
 expect_equal(pp$installed, "1.0")
@@ -52,21 +52,21 @@ expect_true(all(pp$versions$version_priority == 990L))
 
 # --- Pin lines are tolerated by the bulk parsers too ---
 
-rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
+pkgstate:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
     fx("apt-cache-policy-pin-synthetic.txt")))
 o <- apt_origins("pinnedpkg")
 cnd <- apt_candidates("pinnedpkg")
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_equal(nrow(o), 2L)
 expect_equal(cnd$candidate, "3.0")
 
 # --- Unknown package is a typed error here (diagnostic view) ---
 
-rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"), character()))
+pkgstate:::set_runner(fake2(fx("apt-cache-policy-global.txt"), character()))
 e <- tryCatch(apt_policy("no-such-package-xyzzy"), error = identity)
-rdpkg:::set_runner(old)
-expect_inherits(e, "rdpkg_unknown_package")
-expect_inherits(e, "rdpkg_error")
+pkgstate:::set_runner(old)
+expect_inherits(e, "pkgstate_unknown_package")
+expect_inherits(e, "pkgstate_error")
 
 # --- Input validation ---
 

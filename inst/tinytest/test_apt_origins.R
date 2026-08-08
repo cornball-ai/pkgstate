@@ -3,7 +3,7 @@
 fixdir <- if (dir.exists("fixtures")) {
     "fixtures"
 } else {
-    system.file("tinytest", "fixtures", package = "rdpkg")
+    system.file("tinytest", "fixtures", package = "pkgstate")
 }
 fx <- function(f) readLines(file.path(fixdir, f))
 
@@ -27,10 +27,10 @@ cols <- c("package", "version", "priority", "origin", "site", "suite",
 
 # --- Recorded real output parses and joins to the contracted shape ---
 
-old <- rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
+old <- pkgstate:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
     fx("apt-cache-policy-pkgs.txt")))
 df <- apt_origins(c("dpkg", "bash", "linux-image-6.14.0-1014-oem"))
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 
 expect_inherits(df, "data.frame")
 expect_equal(names(df), cols)
@@ -63,7 +63,7 @@ expect_false(kdf$installed)
 
 # --- Phased-update annotation on version lines is tolerated and ignored ---
 
-p <- rdpkg:::parse_policy_packages(fx("apt-cache-policy-phased.txt"))
+p <- pkgstate:::parse_policy_packages(fx("apt-cache-policy-phased.txt"))
 expect_true("1.2.10-1ubuntu5.14" %in% p$version)
 expect_true(all(p$package == "alsa-ucm-conf"))
 expect_false(any(p$installed & p$version == "1.2.10-1ubuntu5.14"))
@@ -71,30 +71,30 @@ expect_false(any(p$installed & p$version == "1.2.10-1ubuntu5.14"))
 # --- Exact-path repos (e.g. the CRAN/r2u apt repo) parse in the global
 # --- table: dist with trailing slash, no component, no arch ---
 
-g <- rdpkg:::parse_policy_global(fx("apt-cache-policy-global.txt"))
+g <- pkgstate:::parse_policy_global(fx("apt-cache-policy-global.txt"))
 expect_true(any(grepl("cloud.r-project.org", g$key, fixed = TRUE)))
 
 # --- Unknown packages yield zero rows with contracted columns ---
 
-rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"), character()))
+pkgstate:::set_runner(fake2(fx("apt-cache-policy-global.txt"), character()))
 df0 <- apt_origins("no-such-package-xyzzy")
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_equal(nrow(df0), 0L)
 expect_equal(names(df0), cols)
 
 # --- Fail-closed on malformed version-table output ---
 
-rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
+pkgstate:::set_runner(fake2(fx("apt-cache-policy-global.txt"),
     fx("apt-cache-policy-malformed.txt")))
 e <- tryCatch(apt_origins("dpkg"), error = identity)
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_inherits(e, "runix_parse_error")
-expect_inherits(e, "rdpkg_error")
+expect_inherits(e, "pkgstate_error")
 
 # --- Input validation ---
 
 e <- tryCatch(apt_origins(NULL), error = identity)
-expect_inherits(e, "rdpkg_error")
+expect_inherits(e, "pkgstate_error")
 expect_true(grepl("native libapt backend", conditionMessage(e)))
 expect_error(apt_origins(character(0)))
 expect_error(apt_origins(NA_character_))
@@ -104,10 +104,10 @@ expect_error(apt_origins(c("dpkg", "")))
 
 counter <- new.env()
 counter$n <- 0L
-rdpkg:::set_runner(fake2(fx("apt-cache-policy-global.txt"), character(),
+pkgstate:::set_runner(fake2(fx("apt-cache-policy-global.txt"), character(),
     counter))
 apt_origins(sprintf("p%04d", 1:1500))
-rdpkg:::set_runner(old)
+pkgstate:::set_runner(old)
 expect_equal(counter$n, 3L)
 
 # --- Live smoke tests ---

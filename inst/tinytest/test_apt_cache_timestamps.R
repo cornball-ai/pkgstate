@@ -36,10 +36,10 @@ expect_inherits(ts3$lists_updated, "POSIXct")
 # missing paths are errors
 e <- tryCatch(apt_cache_timestamps(lists_dir = tempfile(),
     status_file = status), error = identity)
-expect_inherits(e, "rdpkg_error")
+expect_inherits(e, "pkgstate_error")
 e <- tryCatch(apt_cache_timestamps(lists_dir = d,
     status_file = tempfile()), error = identity)
-expect_inherits(e, "rdpkg_error")
+expect_inherits(e, "pkgstate_error")
 
 unlink(c(d, d2), recursive = TRUE)
 unlink(status)
