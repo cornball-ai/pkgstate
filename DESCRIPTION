@@ -10,8 +10,9 @@ Authors@R: c(
 Description: Structured, read-only queries of installed-package state ('dpkg')
     and archive metadata ('APT'): installed packages, candidate versions,
     origins, and upgradeability, returned as plain data frames. Part of the
-    Runix system-administration framework; mutations are out of scope and
-    live in the 'rapt' package.
+    Runix system-administration framework; mutations are out of scope (general
+    'APT' mutations live in a separate sibling package, and 'rapt' is the r2u
+    binary package-install backend).
 License: MIT + file LICENSE
 OS_type: unix
 SystemRequirements: dpkg, apt
