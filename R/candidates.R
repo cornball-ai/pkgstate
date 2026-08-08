@@ -31,7 +31,7 @@ apt_candidates <- function(packages) {
 run_policy_chunks <- function(packages) {
     if (is.null(packages)) {
         stop_pkgstate("packages = NULL (all known packages) is reserved for ",
-                   "the native libapt backend; pass explicit package names")
+                      "the native libapt backend; pass explicit package names")
     }
     if (!is.character(packages) || length(packages) == 0L ||
         anyNA(packages) || !all(nzchar(packages))) {
@@ -67,13 +67,13 @@ parse_policy_candidates <- function(lines) {
         } else if (grepl("^  Installed: ", line)) {
             if (n == 0L) {
                 stop_pkgstate("Installed line before any package header (line ",
-                           i, ")", class = "runix_parse_error")
+                              i, ")", class = "runix_parse_error")
             }
             installed[n] <- sub("^  Installed: ", "", line)
         } else if (grepl("^  Candidate: ", line)) {
             if (n == 0L) {
                 stop_pkgstate("Candidate line before any package header (line ",
-                           i, ")", class = "runix_parse_error")
+                              i, ")", class = "runix_parse_error")
             }
             candidate[n] <- sub("^  Candidate: ", "", line)
         } else if (grepl("^  Version table:", line) ||
@@ -82,13 +82,13 @@ parse_policy_candidates <- function(lines) {
             grepl("^        -?[0-9]+ ", line)) {
             next
         } else {
-            stop_pkgstate("unparseable apt-cache policy line (line ", i, "): ",
-                       line, class = "runix_parse_error")
+            stop_pkgstate("unparseable apt-cache policy line (line ", i,
+                          "): ", line, class = "runix_parse_error")
         }
     }
     if (n > 0L && (anyNA(installed) || anyNA(candidate))) {
         stop_pkgstate("package block missing Installed or Candidate line",
-                   class = "runix_parse_error")
+                      class = "runix_parse_error")
     }
     installed[installed == "(none)"] <- NA_character_
     candidate[candidate == "(none)"] <- NA_character_

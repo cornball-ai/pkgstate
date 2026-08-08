@@ -48,9 +48,9 @@ apt_upgradable <- function() {
             rows$suite != "now",, drop = FALSE]
         if (nrow(r) == 0L) {
             stop_pkgstate("candidate version ", cv, " of ", name,
-                       " has no archive source in policy output; the apt cache ",
-                       "may have changed between queries - retry",
-                       class = "pkgstate_cache_race")
+                          " has no archive source in policy output; the apt cache ",
+                          "may have changed between queries - retry",
+                          class = "pkgstate_cache_race")
         }
         best <- r[order(-r$priority)[1L],]
         data.frame(
