@@ -17,6 +17,7 @@ License: MIT + file LICENSE
 OS_type: unix
 SystemRequirements: dpkg, apt
 Imports: runix
-Suggests: jsonlite, tinytest
+Suggests: janssonr (>= 0.0.1.1), tinytest
+Additional_repositories: https://cornball-ai.github.io/drat
 Encoding: UTF-8
 Config/roxygen2/version: 8.0.0
