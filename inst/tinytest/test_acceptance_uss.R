@@ -18,8 +18,8 @@ if (!at_home()) {
 if (Sys.which("pro") == "" || Sys.which("dpkg") == "") {
     exit_file("needs pro and dpkg")
 }
-if (!requireNamespace("jsonlite", quietly = TRUE)) {
-    exit_file("needs jsonlite")
+if (!requireNamespace("janssonr", quietly = TRUE)) {
+    exit_file("needs janssonr")
 }
 
 inst <- dpkg_installed()
@@ -70,7 +70,7 @@ cls <- vapply(qn, classify, character(1))
 counts <- table(factor(cls, levels = c("main", "restricted", "universe",
     "multiverse", "third_party", "unknown")))
 
-ss <- jsonlite::fromJSON(paste(
+ss <- janssonr::from_json(paste(
     system2("pro", c("security-status", "--format", "json"), stdout = TRUE),
     collapse = ""
 ))
