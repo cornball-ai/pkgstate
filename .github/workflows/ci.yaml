@@ -1,0 +1,72 @@
+name: ci
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+# Least privilege: CI only reads the repo.
+permissions:
+  contents: read
+
+# One run per ref; a new push to a PR cancels the superseded run (but never a
+# master run, which we let finish).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  _R_CHECK_FORCE_SUGGESTS_: "false"
+
+# pkgstate is a read-only dpkg/apt package-state introspection package
+# (OS_type: unix; the subsystem it inspects is Debian/Ubuntu package state). CI
+# is Linux-only on purpose -- dpkg/apt do not exist on macOS/Windows. pkgstate
+# performs NO host mutations, so there is no privileged/broker job: unlike
+# rsystemd, nothing here drives a state change or routes durable audit.
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup r-ci
+        uses: eddelbuettel/github-actions/r-ci@master
+        with:
+          backend: RAPT
+
+      # janssonr is a Suggests (an acceptance test parses a JSON envelope with
+      # it); it ships as an apt binary from the cornball apt repository.
+      - name: Install janssonr from the cornball apt repository
+        run: |
+          sudo tee /etc/apt/sources.list.d/janssonr.sources > /dev/null <<'EOF'
+          Types: deb
+          URIs: https://cornball-ai.github.io/janssonr
+          Suites: noble
+          Components: main
+          Trusted: yes
+          Enabled: yes
+          EOF
+          sudo apt-get update
+          sudo apt-get install -y r-cornball-janssonr
+
+      # runix is pkgstate's sole Import and only non-CRAN dependency; install it
+      # from the public sibling repo (it compiles the AF_UNIX audit-broker
+      # client). tinytest is the one test dep.
+      - name: Install runix (public sibling Import) + tinytest
+        run: |
+          git clone --depth 1 https://github.com/cornball-ai/runix.git \
+            "${RUNNER_TEMP}/runix"
+          R CMD INSTALL "${RUNNER_TEMP}/runix"
+          Rscript -e 'install.packages("tinytest")'
+
+      - name: Install pkgstate
+        run: R CMD INSTALL .
+
+      - name: Tests (read-only introspection against the runner's dpkg/apt)
+        run: |
+          Rscript -e 'r <- tinytest::test_package("pkgstate"); n <- sum(!vapply(r, isTRUE, logical(1))); cat(length(r), "checks,", n, "failures\n"); quit(status = as.integer(n > 0))'
+
+      - name: R CMD check (CRAN cleanliness)
+        run: |
+          R CMD build --no-build-vignettes --no-manual .
+          _R_CHECK_FORCE_SUGGESTS_=false R CMD check --no-manual pkgstate_*.tar.gz
