@@ -62,9 +62,13 @@ jobs:
       - name: Install pkgstate
         run: R CMD INSTALL .
 
+      # at_home = TRUE so the live apt/dpkg smoke sections (guarded by
+      # `if (at_home())`, ~7 files) actually run against the runner's real
+      # dpkg/apt -- test_package defaults at_home = FALSE, which would silently
+      # skip exactly the introspection this job exists to exercise.
       - name: Tests (read-only introspection against the runner's dpkg/apt)
         run: |
-          Rscript -e 'r <- tinytest::test_package("pkgstate"); n <- sum(!vapply(r, isTRUE, logical(1))); cat(length(r), "checks,", n, "failures\n"); quit(status = as.integer(n > 0))'
+          Rscript -e 'r <- tinytest::test_package("pkgstate", at_home = TRUE); n <- sum(!vapply(r, isTRUE, logical(1))); cat(length(r), "checks,", n, "failures\n"); quit(status = as.integer(n > 0))'
 
       - name: R CMD check (CRAN cleanliness)
         run: |
