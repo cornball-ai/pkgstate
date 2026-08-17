@@ -35,11 +35,16 @@ dpkg_selections <- function(packages = NULL) {
     df
 }
 
+## dpkg's closed want vocabulary. Anything outside it is malformed output, not
+## a new selection to pass through.
+.DPKG_WANTS <- c("install", "hold", "deinstall", "purge", "unknown")
+
 ## Pure parser, separated from the runner so fixture tests exercise it offline.
-## Fail-closed: any line that is not exactly 3 tab-separated fields is an error,
-## never a guess (mirrors parse_dpkg_w).
+## Fail-closed and total: an empty read is a zero-row frame, but within a
+## non-empty read every line must be exactly 3 tab-separated fields -- a blank
+## line is malformed and errors, never silently dropped -- and every selection
+## must be one of .DPKG_WANTS.
 parse_dpkg_selections <- function(lines) {
-    lines <- lines[nzchar(lines)]
     if (length(lines) == 0L) {
         return(data.frame(package = character(), architecture = character(),
                           selection = character(), stringsAsFactors = FALSE))
@@ -54,6 +59,15 @@ parse_dpkg_selections <- function(lines) {
         )
     }
     m <- matrix(unlist(parts, use.names = FALSE), ncol = 3L, byrow = TRUE)
+    unknown_sel <- which(!m[, 3L] %in% .DPKG_WANTS)
+    if (length(unknown_sel) > 0L) {
+        stop_pkgstate(
+                      "unexpected dpkg selection ", shQuote(m[unknown_sel[1L], 3L]),
+                      " (line ", unknown_sel[1L], " of ", nrow(m),
+                      "); expected one of ", paste(.DPKG_WANTS, collapse = "/"),
+                      class = "runix_parse_error"
+        )
+    }
     data.frame(
                package = m[, 1L], architecture = m[, 2L],
                selection = m[, 3L], stringsAsFactors = FALSE

@@ -53,6 +53,29 @@ expect_inherits(e, "runix_parse_error")
 expect_inherits(e, "pkgstate_error")
 expect_inherits(e, "runix_error")
 
+# --- Blank lines are parse errors, never silently dropped ---
+
+e <- tryCatch(pkgstate:::parse_dpkg_selections(
+    c("dpkg\tamd64\tinstall", "", "bash\tamd64\tinstall")), error = identity)
+expect_inherits(e, "runix_parse_error")
+expect_inherits(e, "pkgstate_error")
+
+# --- An out-of-vocabulary selection fails closed ---
+
+e <- tryCatch(pkgstate:::parse_dpkg_selections(
+    c("dpkg\tamd64\tinstall", "weird\tamd64\tfrobnicate")), error = identity)
+expect_inherits(e, "runix_parse_error")
+expect_inherits(e, "pkgstate_error")
+
+# --- All five valid want values parse; none is dropped or coerced ---
+
+allw <- pkgstate:::parse_dpkg_selections(c(
+    "a\tamd64\tinstall", "b\tamd64\thold", "c\tamd64\tdeinstall",
+    "d\tall\tpurge", "e\tamd64\tunknown"))
+expect_equal(nrow(allw), 5L)
+expect_equal(sort(unique(allw$selection)),
+    c("deinstall", "hold", "install", "purge", "unknown"))
+
 # --- Non-zero exit status is an error, not empty ---
 
 pkgstate:::set_runner(fake(character(), status = 2L))
