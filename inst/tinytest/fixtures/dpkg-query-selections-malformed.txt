@@ -1,0 +1,3 @@
+goodpkg	amd64	install
+badline-only-two-fields	install
+anotherpkg	amd64	hold

@@ -1,0 +1,10 @@
+aardvark-dns	amd64	install
+accountsservice	amd64	install
+acl	amd64	install
+dpkg	amd64	install
+libc6	amd64	hold
+linux-image-6.14.0-1013-oem	amd64	deinstall
+oldconfig-pkg	all	purge
+partial-pkg	amd64	unknown
+zlib1g	i386	install
+zlib1g	amd64	install
